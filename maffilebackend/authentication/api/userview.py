@@ -40,3 +40,18 @@ class userview(RetrieveAPIView):
                 }
         return Response(response, status=status_code)
 
+class editprofileserializer(serializers.ModelSerializer):
+    class Meta:
+        model = Account
+        fields = ["email"]
+
+class editprofile(APIView):
+    permission_classes = (IsAuthenticated,)
+    authentication_class = JSONWebTokenAuthentication
+    # serializer_class = editprofileserializer
+    def post(self,request,pk):
+        det = Account.objects.get(username=pk)
+        serializer = editprofileserializer(instance=det, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+        return Response({"message":"Successfully upgraded"})
